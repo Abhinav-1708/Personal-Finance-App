@@ -1,16 +1,49 @@
-# flutter_complete_guide
+Personal Expenses App
 
-A new Flutter project.
+This Flutter project is a simple personal expenses app that allows users to track their transactions and view a weekly spending chart. Users can add new transactions, including a title, amount, and date.
 
-## Getting Started
+Features
 
-This project is a starting point for a Flutter application.
+- Add new transactions: Users can input the title, amount, and date for each transaction.
+- Delete transactions: Users can remove unwanted transactions from the list.
+- View weekly spending chart: A visual representation of weekly spending helps users analyze their financial activity.
 
-A few resources to get you started if this is your first Flutter project:
+Getting Started
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+To run this app on your local machine, follow these steps:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Clone the repository:
+   git clone https://github.com/your-username/personal-expenses-app.git
+
+2. Navigate to the project directory:
+   cd personal-expenses-app
+
+3. Install dependencies:
+   flutter pub get
+
+4. Run the app:
+   flutter run
+
+ Usage
+
+- Adding a Transaction:
+  - Tap the "+" button on the app bar.
+  - Fill in the transaction details (title, amount, and date).
+  - Tap "Choose Date" to pick a date from the calendar.
+  - Tap "Add Transaction" to save the new entry.
+
+- Deleting a Transaction:
+  - Swipe left on a transaction in the list.
+  - Tap the delete icon to remove the transaction.
+
+- Viewing Chart:
+  - Observe the spending chart on the home screen.
+  - The chart displays the percentage of spending for each day of the week.
+
+
+
+## Dependencies
+
+- `flutter`: [Flutter](https://flutter.dev/)
+- `intl`: [intl](https://pub.dev/packages/intl)
+
