@@ -1,80 +1,119 @@
 import 'package:flutter/material.dart';
 
-import './quiz.dart';
-import './result.dart';
+import './widgets/new_transaction.dart';
+import './widgets/transaction_list.dart';
+import './widgets/chart.dart';
+import './models/transaction.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   @override
-  State<StatefulWidget> createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Personal Expenses',
+      theme: ThemeData(
+        primarySwatch: Colors.purple,
+        hintColor: Colors.amber,
+        // errorColor: Colors.red,
+        fontFamily: 'Quicksand',
+        textTheme: ThemeData.light().textTheme.copyWith(
+              headline6: TextStyle(
+                fontFamily: 'OpenSans',
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+              button: TextStyle(color: Colors.white),
+            ),
+        appBarTheme: AppBarTheme(
+          titleTextStyle: TextStyle(
+            fontFamily: 'OpenSans',
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      home: MyHomePage(),
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
-  var _questionIndex = 0;
-  var _totalScore = 0;
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
 
-  final _questions = const [
-    {
-      "questionText": 'What\'s your favorite color?',
-      "answer": [
-        {'text': 'Black', 'score': 10},
-        {'text': 'Red', 'score': 20},
-        {'text': 'Green', 'score': 30},
-        {'text': 'White', 'score': 40},
-      ],
-    },
-    {
-      "questionText": 'What\'s your favorite animal?',
-      "answer": [
-        {'text': 'Lion', 'score': 15},
-        {'text': 'Panda', 'score': 25},
-        {'text': 'Koala', 'score': 35},
-        {'text': 'Tiger', 'score': 45},
-      ],
-    },
-    {
-      "questionText": 'What\'s your favorite friend?',
-      "answer": [
-        {'text': 'Gauri', 'score': 100},
-        {'text': 'Kashish', 'score': 20},
-        {'text': 'Shruti', 'score': 30},
-        {'text': 'Shreya', 'score': 40},
-      ],
-    },
-  ];
+class _MyHomePageState extends State<MyHomePage> {
+  final List<Transaction> _userTransactions = [];
 
-  void _answerQuestion(int score) {
-    _totalScore += score;
+  List<Transaction> get _recentTransactions {
+    return _userTransactions.where((tx) {
+      return tx.date.isAfter(
+        DateTime.now().subtract(
+          Duration(days: 7),
+        ),
+      );
+    }).toList();
+  }
+
+  void _addNewTransaction(
+      String txTitle, double txAmount, DateTime chosenDate) {
+    final newTx = Transaction(
+      title: txTitle,
+      amount: txAmount,
+      date: chosenDate,
+      id: DateTime.now().toString(),
+    );
 
     setState(() {
-      _questionIndex++;
+      _userTransactions.add(newTx);
     });
+  }
 
-    print(_questionIndex);
+  void _startAddNewTransaction(BuildContext ctx) {
+    showModalBottomSheet(
+      context: ctx,
+      builder: (_) {
+        return GestureDetector(
+          onTap: () {},
+          child: NewTransaction(_addNewTransaction),
+          behavior: HitTestBehavior.opaque,
+        );
+      },
+    );
+  }
 
-    if (_questionIndex < _questions.length) {
-      print("We have more questions");
-    } else {
-      print("No more questions!!");
-      print("Total Score: $_totalScore");
-    }
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((tx) => tx.id == id);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('My First App'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Personal Expenses'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () => _startAddNewTransaction(context),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Chart(_recentTransactions),
+            TransactionList(_userTransactions, _deleteTransaction),
+          ],
         ),
-        body: _questionIndex < _questions.length
-            ? Quiz(
-                answerQuestion: (int score) => _answerQuestion(score),
-                questionIndex: _questionIndex,
-                questions: _questions,
-              )
-            : Result(_totalScore),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () => _startAddNewTransaction(context),
       ),
     );
   }
